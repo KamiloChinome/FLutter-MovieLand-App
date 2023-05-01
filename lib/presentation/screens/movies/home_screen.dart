@@ -4,14 +4,12 @@ import 'package:flutter_movies_app/presentation/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomeScreen extends StatelessWidget {
-
   static const name = 'home-screen';
-  
   const HomeScreen({Key? key}) : super(key: key);
-  
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
+      bottomNavigationBar: CustomBottomNavigation(),
       body: _HomeView()
     );
   }
@@ -19,36 +17,23 @@ class HomeScreen extends StatelessWidget {
 
 class _HomeView extends ConsumerStatefulWidget {
   const _HomeView();
-
   @override
   _HomeViewState createState() => _HomeViewState();
 }
-
 class _HomeViewState extends ConsumerState<_HomeView> {
-
   @override
   void initState() {
     super.initState();
     ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
   }
-
   @override
   Widget build(BuildContext context) {
-    final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
+    // final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
+    final slideShowMovies = ref.watch(moviesSlidesShowProvider);
     return Column(
       children: [
         const CustomAppBar(),
-        Expanded(
-          child: ListView.builder(
-            itemCount: nowPlayingMovies.length,
-            itemBuilder: (BuildContext context, int index) {
-              final movie = nowPlayingMovies[index];
-              return ListTile(
-                title: Text(movie.title),
-              );
-            },
-          ),
-        )
+        MoviesSlideShow(movies: slideShowMovies),
       ],
     );
   }
