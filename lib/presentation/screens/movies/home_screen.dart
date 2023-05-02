@@ -25,22 +25,75 @@ class _HomeViewState extends ConsumerState<_HomeView> {
   void initState() {
     super.initState();
     ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
+    ref.read(popularMoviesProvider.notifier).loadNextPage();
   }
   @override
   Widget build(BuildContext context) {
-    final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
+    final colors = Theme.of(context).colorScheme;
+    final titleStyle = Theme.of(context).textTheme.titleMedium;
+
     final slideShowMovies = ref.watch(moviesSlidesShowProvider);
-    return Column(
-      children: [
-        const CustomAppBar(),
-        MoviesSlideShow(movies: slideShowMovies),
-        MovieHorizontalListview(
-          movies: nowPlayingMovies,
-          title: 'In cinemas',
-          subTitle: 'Lunes 20',
-          loadNextPage: () => ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+    final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
+    final popularMovies = ref.watch(popularMoviesProvider);
+
+    return CustomScrollView(
+      slivers: [
+        SliverAppBar(
+          shadowColor: Theme.of(context).scaffoldBackgroundColor,
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
+          centerTitle: false,
+          floating: true,
+          actions: [
+            IconButton(
+                icon: const Icon(Icons.search),
+                onPressed: (){},
+              ),
+          ],
+          title: Row(
+            children: [
+              Icon(Icons.movie_outlined, color: colors.primary,),
+              const SizedBox(width: 10),
+              Text('Movieland', style: titleStyle,),
+            ],
+          ),
         ),
-      ],
+        SliverList(delegate: SliverChildBuilderDelegate(
+          (context, index){
+            return Column(
+              children: [
+                
+                MoviesSlideShow(movies: slideShowMovies),
+                MovieHorizontalListview(
+                  movies: nowPlayingMovies,
+                  title: 'In cinemas',
+                  subTitle: 'Lunes 20',
+                  loadNextPage: () => ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+                ),
+                MovieHorizontalListview(
+                  movies: popularMovies,
+                  title: 'Popular',
+                  loadNextPage: () => ref.read(popularMoviesProvider.notifier).loadNextPage()
+                ),
+                MovieHorizontalListview(
+                  movies: nowPlayingMovies,
+                  title: 'Coming Soon',
+                  subTitle: 'This Month',
+                  loadNextPage: () => ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+                ),
+                MovieHorizontalListview(
+                  movies: nowPlayingMovies,
+                  title: 'Top Rated',
+                  loadNextPage: () => ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+                ),
+                const SizedBox(height: 20,)
+              ],
+            );
+          },
+          childCount: 1,
+        ))
+      ]
     );
   }
 }
