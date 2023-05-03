@@ -26,15 +26,22 @@ class _HomeViewState extends ConsumerState<_HomeView> {
     super.initState();
     ref.read(nowPlayingMoviesProvider.notifier).loadNextPage();
     ref.read(popularMoviesProvider.notifier).loadNextPage();
+    ref.read(upComingMoviesProvider.notifier).loadNextPage();
+    ref.read(topRatedMoviesProvider.notifier).loadNextPage();
   }
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final titleStyle = Theme.of(context).textTheme.titleMedium;
 
+    final initialLoading = ref.watch(initialLoadingProvider);
+    if(initialLoading) return const FullScreenLoader();
+
+    final colors = Theme.of(context).colorScheme;
+    final titleStyle = Theme.of(context).textTheme.titleLarge;
     final slideShowMovies = ref.watch(moviesSlidesShowProvider);
     final nowPlayingMovies = ref.watch(nowPlayingMoviesProvider);
     final popularMovies = ref.watch(popularMoviesProvider);
+    final topRatedMovies = ref.watch(topRatedMoviesProvider);
+    final upComingMovies = ref.watch(upComingMoviesProvider);
 
     return CustomScrollView(
       slivers: [
@@ -47,13 +54,13 @@ class _HomeViewState extends ConsumerState<_HomeView> {
           floating: true,
           actions: [
             IconButton(
-                icon: const Icon(Icons.search),
+                icon: const Icon(Icons.search, size: 30,),
                 onPressed: (){},
               ),
           ],
           title: Row(
             children: [
-              Icon(Icons.movie_outlined, color: colors.primary,),
+              Icon(Icons.movie_outlined, color: colors.primary, size: 30,),
               const SizedBox(width: 10),
               Text('Movieland', style: titleStyle,),
             ],
@@ -63,8 +70,9 @@ class _HomeViewState extends ConsumerState<_HomeView> {
           (context, index){
             return Column(
               children: [
-                
+                const SizedBox(height: 10,),
                 MoviesSlideShow(movies: slideShowMovies),
+                const SizedBox(height: 10,),
                 MovieHorizontalListview(
                   movies: nowPlayingMovies,
                   title: 'In cinemas',
@@ -77,15 +85,15 @@ class _HomeViewState extends ConsumerState<_HomeView> {
                   loadNextPage: () => ref.read(popularMoviesProvider.notifier).loadNextPage()
                 ),
                 MovieHorizontalListview(
-                  movies: nowPlayingMovies,
-                  title: 'Coming Soon',
-                  subTitle: 'This Month',
-                  loadNextPage: () => ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+                  movies: topRatedMovies,
+                  title: 'Top Rated',
+                  loadNextPage: () => ref.read(topRatedMoviesProvider.notifier).loadNextPage()
                 ),
                 MovieHorizontalListview(
-                  movies: nowPlayingMovies,
-                  title: 'Top Rated',
-                  loadNextPage: () => ref.read(nowPlayingMoviesProvider.notifier).loadNextPage()
+                  movies: upComingMovies,
+                  title: 'Coming Soon',
+                  subTitle: 'This Month',
+                  loadNextPage: () => ref.read(upComingMoviesProvider.notifier).loadNextPage()
                 ),
                 const SizedBox(height: 20,)
               ],
