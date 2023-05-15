@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final actorsByMovieProvider = StateNotifierProvider<ActorsByMovieNotifier, Map<String, List<Actor>>>((ref) {
 
   final actorsRepository = ref.watch(actorRepositoryProvider);
-  return ActorsByMovieNotifier(getActor: actorsRepository.getActorsByMovie);
-
+  return ActorsByMovieNotifier(getActor: actorsRepository.getActorsByMovie); 
+///xd
 });
 
 
